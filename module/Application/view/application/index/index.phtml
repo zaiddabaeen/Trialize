@@ -1,0 +1,165 @@
+
+<script>
+
+	$(document).ready(function() {
+		message = $('#message');
+
+	});
+
+	function save(id) {
+
+		var row = $('#tr_' + id);
+		var app_name = row.find('input[name="app_name"]').val();
+		var package_name = row.find('input[name="package_name"]').val();
+		var enabled = row.find('input[name="enabled"]').val() == 'on' ? '1' : '0';
+		var trial_end = row.find('input[name="trial_end"]').val();
+
+		$.ajax({
+			data: {id: id, app_name: app_name, package_name: package_name, enabled: enabled, trial_end: trial_end},
+			url: '<?php echo $this->url('index', ['action' => 'edit'])?>',
+			type: "POST",
+			dataType: "JSON",
+			success: function(res) {
+				if (res.status == "1") {
+					showMessage(message, res);
+				} else {
+					showMessage(message, res);
+				}
+			}
+		});
+	}
+
+	function deleteID(id) {
+
+		var row = $('#tr_' + id);
+		
+		$.ajax({
+			data: {id: id},
+			url: '<?php echo $this->url('index', ['action' => 'delete']) ?>',
+			type: "POST",
+			dataType: "JSON",
+			success: function(res) {
+				if (res.status == "1") {
+					showMessage(message, res);
+					row.fadeOut();
+				} else {
+					showMessage(message, res);
+				}
+			}
+		});
+
+	}
+
+	function showMessage(jMessage, res) {
+
+		var action = res.status;
+		var message = res.message;
+
+		if (action == '0') {
+			jMessage.show().attr('class', 'alert alert-danger');
+			jMessage.html("" + message);
+		} else if (action == '1') {
+			jMessage.show().attr('class', 'alert alert-success');
+			jMessage.html("" + message);
+		}
+		
+		setTimeout(function () {
+			return window.message.fadeOut(200);
+		}, 5000);
+
+	}
+
+	function search(e) {
+
+		var search = $('#search').val();
+
+		window.location.href = "<?php echo $this->url('index') . '?search=' ?>" + search;
+
+	}
+
+</script>
+
+<div class="jumbotron" align="center">
+	<h2>Trialize</h2>
+	<h4>Trial management for your applications</h4>
+
+	<!--<a href="<?php echo $this->url('index', ['action' => 'create'])?>" >Shorten Link</a>-->
+	<div>
+		<input type="text" id="search" placeholder="Search" name="search" value="<?php echo isset($search) ? $search : '' ?>">&nbsp;&nbsp;<button class="btn btn-primary" onclick="return search(this);"><i class="glyphicon glyphicon-search"></i></button>
+	</div>
+</div>
+
+<div id="message"></div>
+
+<div class="col-lg-12">
+	<div class="table-responsive">
+	<table class="table table-bordered">
+			<tr>
+				<td>
+					App Name
+				</td>
+				<td>
+					Package Name
+				</td>
+				<td class="views">
+					Launch Count
+				</td>
+				<td>
+					Valid Until
+				</td>
+				<td>
+					Enabled
+				</td>
+				<td>
+					Last Launched
+				</td>
+				<td>
+					Created At
+				</td>
+				<td>
+					Actions
+				</td>
+			</tr>
+			<?php foreach ($entries as $entry) { ?>
+				<tr id="<?php echo 'tr_' . $entry->id ?>">
+					<td>
+						<input type="text" class="form-control" name="app_name" value="<?php echo $entry->app_name; ?>">
+					</td>
+					<td>
+						<input type="text" name="package_name" class="form-control" value="<?php echo $entry->package_name ?>">
+					</td>
+					<td class="views">
+						<?php echo $entry->launch_count ?>
+					</td>
+					<td>
+						<input type="text" name="trial_end" class="form-control" value="<?php echo $entry->trial_end ?>">
+					</td>
+					<td>
+						<input type="checkbox" class="checkbox" name="enabled" <?php echo $entry->enabled ? "checked" : "" ?>
+					</td>
+					<td>
+						<?php echo Date("Y-m-d h:i:s", strtotime($entry->last_launched) + 3 * 60 * 60); ?>
+					</td>
+					<td>
+						<?php echo $entry->created_at; ?>
+					</td>
+					<td>
+						<a href="javascript:void(0);" id="<?php echo $entry->id ?>" onclick="return save(<?php echo $entry->id ?>);"><i  class="glyphicon glyphicon-save">Save</i></a><br />
+						<div class="dropdown">
+
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">More<b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="javascript:void(0);" id="<?php echo $entry->id; ?>" onclick="return deleteID(<?php echo $entry->id ?>);" class="deleteBtn">
+										<i class="glyphicon glyphicon-trash">Delete</i>
+									</a>
+
+								</li>
+							</ul>
+						</div>
+					</td>
+				</tr>
+			<?php } ?>
+	</table>
+	</div>
+</div>

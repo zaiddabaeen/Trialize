@@ -1,0 +1,109 @@
+<script>
+	$(function() {
+
+		$("#addBtn").click(function() {
+			var btn = $(this);
+			$(this).hashForm({
+				form: $('#addForm').serialize(),
+				url: "<?php echo $this->url('index', ['action' => 'create']) ?>",
+				btn: btn,
+				message: "div#message",
+				loadingName: "message"
+			}).done(function(res) {
+				if (res.status == '1') {
+					window.location.href = "<?php echo $this->url('index') ?>";
+				}
+			});
+		});
+
+		$(document).ready(function() {
+			$('input[name="trial_end"]').setNow();
+		}
+		);
+
+		$.fn.setNow = function(onlyBlank) {
+			var now = new Date($.now())
+					, year
+					, month
+					, date
+					, hours
+					, minutes
+					, seconds
+					, formattedDateTime
+					;
+
+			year = now.getFullYear();
+			month = now.getMonth().toString().length === 1 ? '0' + (now.getMonth() + 1).toString() : now.getMonth() + 1;
+			date = now.getDate().toString().length === 1 ? '0' + (now.getDate()).toString() : now.getDate();
+			hours = now.getHours().toString().length === 1 ? '0' + now.getHours().toString() : now.getHours();
+			minutes = now.getMinutes().toString().length === 1 ? '0' + now.getMinutes().toString() : now.getMinutes();
+			seconds = now.getSeconds().toString().length === 1 ? '0' + now.getSeconds().toString() : now.getSeconds();
+
+			formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
+
+			if (onlyBlank === true && $(this).val()) {
+				return this;
+			}
+
+			$(this).val(formattedDateTime);
+
+			return this;
+		}
+	});
+</script>
+<div class="col-lg-5 col-lg-offset-4">
+	<form action="" method="post" id="addForm" onSubmit="return false;">
+		<table class="table table-bordered">
+			<tr>
+				<td colspan="2" align="center">
+					<h3>
+						Trialize
+					</h3>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					App Name
+				</td>
+				<td>
+
+					<input type="text" class="form-control" name="app_name" >
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Package Name:
+				</td>
+				<td>
+					<input type="text" name="package_name" class="form-control">
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Valid Until:
+				</td>
+				<td>
+					<input type="datetime-local" name="trial_end" class="form-control" value="<?php echo Date('m/d/Y, h:i s') ?>">
+				</td>
+			</tr>
+		 <!--   <tr>
+			 <td>
+			  Active:
+			 </td>
+			 <td>
+			  <input type="checkbox" class="checkbox" name="active" checked>
+			 </td>
+			</tr>-->
+			<tr>
+				<td colspan="2" align="center">
+					<input type="submit" class="btn btn-primary" id="addBtn" value="Register">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center">
+					<div id="message"></div>
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>
