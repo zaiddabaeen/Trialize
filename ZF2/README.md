@@ -9,13 +9,13 @@ Add this project to your server and manage your trial android apps.
 
 ###Server Installation
 * Copy the project to your server DocumentRoot, and create a vhost.<br />
-* Import the table data/trialize.sql, you might need to change the database name to suit your databases.<br />
+* Import the table data/trialize.sql, you might need to change the database name to suit your databases from `config/autoload/global.php`.<br />
 * Edit IndexController in loginAction to change the login credentials.
 
 ###Android Installation
 * Add to your dependencies in `build.gradle` for jCenter:
 ```gradle
-    compile com.zaiddabaeen.trialize:sdk:1.+
+    compile com.zaiddabaeen.trialize:lib:1.+
 ```
 
 * Set up the event `isValid` to check the validity of the trial period:
@@ -29,9 +29,15 @@ Add this project to your server and manage your trial android apps.
 
         @Override
         public void error() {}
-    }, true);
+    });
 ```
 
 > *onGoing* denotes that the trial is still valid and provides the number of days remaining. 
+
 > *ended* denotes that the trial has ended. 
+
 > *error* denotes that the request cannot be made due to lack of internet connectivity, server failures, or inexistence of a record for that app.
+
+###Demo
+
+A demo web application is available at http://trialize.zaiddabaeen.tk. Create a user and start trializing your applications.
